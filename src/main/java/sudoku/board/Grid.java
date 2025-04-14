@@ -1,4 +1,4 @@
-package sudoku;
+package sudoku.board;
 
 public class Grid {
     private Cell[][] cells; //the grid itself, maybe there is a better datastructure but array is simple
@@ -9,15 +9,16 @@ public class Grid {
         cells = new Cell[size][size];
         this.size = size;
         this.givens = givens;
+        populateGrid(givens);
     }
 
     /* populates the grid with empty cells and givens
     * it checks if there is space in the grid to put in all the givens*/
-    public void populateGrid() throws IllegalArgumentException {
+    public void populateGrid(String givens) throws IllegalArgumentException {
         if(null!=givens && size*size>=givens.length()) {
             int i = 0, x = 0, y = 0;
             while(i<givens.length()) {
-                if(givens.charAt(i) == '.') {
+                if(givens.charAt(i) == '0') {
                     cells[y][x] = new Cell(size);
 
                 }else{

@@ -1,4 +1,4 @@
-package sudoku;
+package sudoku.board;
 
 public class Cell {
 
@@ -17,6 +17,11 @@ public class Cell {
         this.bound = bound;
         this.number = number;
     }
+
+    /**
+     * Constructor for empty cells
+     * @param bound //cell number upperlimit
+     */
     public Cell(int bound) {
         this.bound = bound;
         this.isSet = false;
@@ -38,5 +43,8 @@ public class Cell {
         return number == 0;
     }
 
+    public boolean isSet() {
+        return isSet;
+    }
 
 }
