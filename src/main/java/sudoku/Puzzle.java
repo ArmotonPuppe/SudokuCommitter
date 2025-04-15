@@ -18,6 +18,7 @@ public class Puzzle {
     public String getDifficulty() {
         return difficulty;
     }
+
     public String getSolution() {
         return solution;
     }
