@@ -2,27 +2,12 @@ package sudoku.board;
 
 import java.util.List;
 
-public class Row implements Region {
-    public List<Cell> cells;
+public class Row extends Region {
 
-    public boolean validate() {
-        return true;
+    public Row(int size){
+        super(size);
     }
-
-    public List<Cell> getCells() {
-        return cells;
-    }
-
-    public boolean contains(Cell cell) {
-        return cells.contains(cell);
-    }
-
-    public void add(Cell cell) {
-        cells.add(cell);
-    }
-
-    @Override
-    public boolean isComplete() {
-        return false;
+    public Row(Cell[] cells) {
+        super(cells);
     }
 }

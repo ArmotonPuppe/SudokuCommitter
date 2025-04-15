@@ -12,8 +12,9 @@ public class Grid {
         populateGrid(givens);
     }
 
-    /* populates the grid with empty cells and givens
-    * it checks if there is space in the grid to put in all the givens*/
+    /** populates the grid with empty cells and givens
+    * it checks if there is space in the grid to put in all the givens
+    * @throws IllegalArgumentException if there isn't enough space or givens is null*/
     public void populateGrid(String givens) throws IllegalArgumentException {
         if(null!=givens && size*size>=givens.length()) {
             int i = 0, x = 0, y = 0;
@@ -33,6 +34,7 @@ public class Grid {
             }
         }
     }
+
     //Creates a string of the grid
     //0 = empty grid
     @Override
