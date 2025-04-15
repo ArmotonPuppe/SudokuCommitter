@@ -11,4 +11,15 @@ public class Puzzle {
     public Puzzle() {
         
     }
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+    public String getSolution() {
+        return solution;
+    }
+
 }
