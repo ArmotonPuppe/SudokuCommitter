@@ -5,9 +5,9 @@ import java.util.List;
 public class Row extends Region {
 
     public Row(int size){
-        super(size);
+        super(RegionType.ROW, size);
     }
     public Row(Cell[] cells) {
-        super(cells);
+        super(RegionType.ROW, cells);
     }
 }

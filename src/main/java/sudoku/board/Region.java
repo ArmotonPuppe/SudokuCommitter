@@ -6,15 +6,28 @@ import java.util.stream.Collectors;
 public abstract class Region {
     List<Cell> cells;
     int size;
+    RegionType type;
 
-    public Region(int size){
+    public Region(RegionType type, int size) {
         this.cells = new ArrayList<>(size);
         this.size = size;
+        this.type = type;
     }
-    public Region(Cell[] cells) {
+    public Region(RegionType type, Cell[] cells) {
         this.size = cells.length;
+        this.type = type;
         this.cells = new ArrayList<Cell>(Arrays.asList(cells));
 
+    }
+
+    public RegionType getType() {
+        return type;
+    }
+    public void add(Cell cell) {
+        cells.add(cell);
+    }
+    public void addCells(Cell[] cells){
+        this.cells.addAll(Arrays.asList(cells));
     }
     public void addCell(Cell cell) throws IllegalArgumentException {
         if(null==cell){
@@ -25,6 +38,7 @@ public abstract class Region {
     public List<Cell> getCells() {
         return cells;
     }
+
 
     public boolean regionHasConflict(){
         Set<Integer> setCells = getNumbers(getSetCells());
