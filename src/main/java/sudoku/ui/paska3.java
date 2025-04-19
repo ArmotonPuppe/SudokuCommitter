@@ -12,7 +12,7 @@ public class paska3 {
 	static JFrame frame;
 		static final String WINDOWTITLE = "ass window title";
 	
-	// stuff we probably wont hide
+	// stuff we probably won't hide
 	static JMenuBar menuBar;
 	static JPanel gridBase; // main game field
 	
@@ -341,7 +341,7 @@ public class paska3 {
 					
 					for (int u = 0; u < xy; u++) {
 						gridBlock = new JPanel();
-							gridBlock.setBackground(new Color(  ));
+							gridBlock.setBackground(new Color(0));
 							gridBlock.setBorder(new EtchedBorder( EtchedBorder.RAISED ));
 							gridBlock.setLayout(new GridLayout( blocky, blockx, 0, 0 ));
 							/*
