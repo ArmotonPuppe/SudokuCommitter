@@ -1,3 +1,4 @@
+package sudoku.ui;
 
 import javax.swing.*;
 import javax.swing.border.*;

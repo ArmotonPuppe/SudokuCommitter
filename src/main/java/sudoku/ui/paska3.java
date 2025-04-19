@@ -1,5 +1,5 @@
+package sudoku.ui;
 
-import com.sun.jdi.event.StepEvent;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
