@@ -1,4 +1,4 @@
-package sudoku;
+package sudoku.game;
 
 public class Player {
 

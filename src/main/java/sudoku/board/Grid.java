@@ -121,6 +121,9 @@ public class Grid {
     public Map<RegionType, List<Region>> getRegions() {
         return regions;
     }
+    public boolean isFilled() {
+        return Arrays.stream(cells).flatMap(Arrays::stream).noneMatch(Cell::isEmpty);
+    }
 
     //Creates a string of the grid
     //0 = empty grid
@@ -130,7 +133,7 @@ public class Grid {
         for(Cell[] row : cells) {
             for(Cell cell : row) {
                 if(cell.isEmpty()) {
-                    result.append('0');
+                    result.append('.');
                 }else{
                     result.append(cell.getNumber());
                 }

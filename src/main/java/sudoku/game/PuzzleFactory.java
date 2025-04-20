@@ -1,0 +1,38 @@
+package sudoku.game;
+
+import java.io.*;
+
+public class PuzzleFactory {
+    public Puzzle createPuzzle(Difficulty difficulty, int size)throws FileNotFoundException {
+        String path = difficulty.getLabel() + ".csv";
+        Puzzle puzzle = null;
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)))) {
+            if(br == null){
+                throw new FileNotFoundException();
+            }
+            String line = br.readLine();
+            String[] parts = line.split(",");
+            int id = Integer.parseInt(parts[0]);
+            String givens = parts[1];
+            String solution = parts[2];
+            if(!validatePuzzle(givens, solution)) {
+                throw new IllegalStateException("Solution doesn't match the puzzle in file at: " + parts[0]);
+            }else{
+                puzzle = new Puzzle(id, size, difficulty, solution, givens);
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return puzzle;
+    }
+    public boolean validatePuzzle(String givens, String solution) {
+        for(int i = 0; i < solution.length(); i++){
+            if(givens.charAt(i)!='.' && givens.charAt(i)!=solution.charAt(i)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+}
