@@ -34,13 +34,22 @@ public class Game {
         settings.save(path);
         start();
     }
-    public void end() throws IOException {
+    public void checkSolution() {
+        if(isSolved()){
+            end();
+        }
+    }
+    public void end() {
         endTime = Instant.now();
     }
     public boolean isSolved() {
         return puzzle.isSolved();
     }
 
+    public void setNumber(int x, int y, int number){
+        int prev = puzzle.getGrid().getCell(x, y).getNumber();
+        puzzle.getGrid().setCellNumberAt(x, y, number);
+    }
 
     public Instant getStartTime() {
         return startTime;

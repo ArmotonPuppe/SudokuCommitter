@@ -4,12 +4,14 @@ import java.io.*;
 
 public class PuzzleFactory {
     public Puzzle createPuzzle(Difficulty difficulty, int size)throws FileNotFoundException {
-        String path = difficulty.getLabel() + ".csv";
+        String path = "/" + difficulty.getLabel() + ".csv";
         Puzzle puzzle = null;
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(path)))) {
-            if(br == null){
-                throw new FileNotFoundException();
-            }
+        InputStream is = getClass().getResourceAsStream(path);
+        if(is == null){
+            throw new FileNotFoundException("Could not find Puzzle at " + path);
+        }
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+
             String line = br.readLine();
             String[] parts = line.split(",");
             int id = Integer.parseInt(parts[0]);

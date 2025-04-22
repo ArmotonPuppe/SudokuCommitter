@@ -25,7 +25,7 @@ public class Grid {
         if(null!=givens && size*size>=givens.length()) {
             int i = 0, x = 0, y = 0;
             while(i<givens.length()) {
-                if(givens.charAt(i) == '0') {
+                if(givens.charAt(i) == '.' || givens.charAt(i) == '0') {
                     cells[y][x] = new Cell(size);
 
                 }else{
@@ -123,6 +123,10 @@ public class Grid {
     }
     public boolean isFilled() {
         return Arrays.stream(cells).flatMap(Arrays::stream).noneMatch(Cell::isEmpty);
+    }
+
+    public int getSize() {
+        return size;
     }
 
     //Creates a string of the grid
