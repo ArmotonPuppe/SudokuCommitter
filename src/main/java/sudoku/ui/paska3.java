@@ -5,6 +5,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import sudoku.ui.menu.*;
 
 public class paska3 {
 	
@@ -14,7 +15,7 @@ public class paska3 {
 	
 	// stuff we probably won't hide
 	static JMenuBar menuBar;
-	static JPanel gridBase; // main game field
+	static GridBase gridBase; // main game field
 	
 	// TODO paska
 	static int blockx = 3;
@@ -149,77 +150,11 @@ public class paska3 {
 				////////////////////////////////////////////////////////////////
 				//	menubar
 				////////////////////////////////////////////////////////////////
-				
-				// GAME
-				JMenu menuGame = new JMenu( "Game" );
-					menuGame.setMnemonic('G');
-					
-					JMenuItem menuGameNew = new JMenuItem( "New Game" );
-						menuGameNew.setMnemonic('N');
-					menuGame.add( menuGameNew );
-					
-					JMenuItem menuGameRestart = new JMenuItem( "Restart Game" );
-						menuGameRestart.setMnemonic('R');
-					menuGame.add( menuGameRestart );
-					
-					menuGame.addSeparator();
-					JMenuItem menuGamePref = new JMenuItem( "Preferences" );
-						menuGamePref.setMnemonic('P');
-						menuGamePref.addActionListener(new EH_menuGamePref());
-					menuGame.add( menuGamePref );
-					
-					menuGame.addSeparator();
-					JMenuItem menuGameExit = new JMenuItem( "Exit" );
-						menuGameExit.setMnemonic('x');
-						menuGameExit.addActionListener(new EH_menuGameExit());
-					menuGame.add( menuGameExit );
-				
-				// VIEW
-				JMenu menuView = new JMenu( "View" );
-					menuView.setMnemonic('V');
-					JCheckBoxMenuItem menuViewPalette = new JCheckBoxMenuItem( "    palette" );
-						menuViewPalette.setState(showPalette);
-						menuViewPalette.setMnemonic('p');
-						menuViewPalette.addActionListener(new EH_menuViewPalette());
-					menuView.add( menuViewPalette );
-					
-					JCheckBoxMenuItem menuViewStats = new JCheckBoxMenuItem( "    stats" );
-						menuViewStats.setState(showStats);
-						menuViewStats.setMnemonic('s');
-						menuViewStats.addActionListener(new EH_menuViewStats());
-					menuView.add( menuViewStats );
-					
-					JCheckBoxMenuItem menuViewStatusBar = new JCheckBoxMenuItem( "    statusbar" );
-						menuViewStatusBar.setState(showStatusBar);
-						menuViewStatusBar.setMnemonic('t');
-						menuViewStatusBar.addActionListener(new EH_menuViewStatusBar());
-					menuView.add( menuViewStatusBar );
-					
-					JCheckBoxMenuItem menuViewToolBar = new JCheckBoxMenuItem( "    toolbar" );
-						menuViewToolBar.setState(showToolBar);
-						menuViewToolBar.setMnemonic('o');
-						menuViewToolBar.addActionListener(new EH_menuViewToolBar());
-					menuView.add( menuViewToolBar );
-				
-				// HELP
-				JMenu menuHelp = new JMenu( "Help" );
-					menuHelp.setMnemonic('H');
-					
-					JMenuItem menuHelpHelp = new JMenuItem( "Help" );
-						menuHelpHelp.setAccelerator(
-							KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)
-						);
-					menuHelp.add( menuHelpHelp );
-					
-					menuHelp.addSeparator();
-					JMenuItem menuHelpAbout = new JMenuItem( "About" );
-					menuHelp.add( menuHelpAbout );
-				
-				////////////////////////////////
+
 				menuBar = new JMenuBar();
-					menuBar.add( menuGame );
-					menuBar.add( menuView );
-					menuBar.add( menuHelp );
+					menuBar.add( new MenuGame() );
+					menuBar.add( new MenuView() );
+					menuBar.add( new MenuHelp() );
 				frame.setJMenuBar( menuBar );
 				
 				////////////////////////////////////////////////////////////////
@@ -299,62 +234,12 @@ public class paska3 {
 				////////////////////////////////////////////////////////////////
 				//	grid
 				////////////////////////////////////////////////////////////////
-				
-				gridBase = new JPanel();
-				{
-					/* TODO ruudut järjestykseen
-					
-						nyt ne on
-						00 01 02 | 09 10 11 | 18 19 20
-						03 04 05 | 12 13 14 | 21 22 23
-						06 07 08 | 15 16 17 | 24 25 26
-						...
-						
-						ja ne pitäs olla
-						00 01 02 | 03 04 05 | 06 07 08
-						09 10 11 | 12 13 14 | 15 16 17
-						18 19 20 | 21 22 23 | 24 25 26
-						...
-						
-						pitää tehä gridit ja layoutit eka
-						sitten lisätä ruutu(napit) sinne tänne
-						vaikea generalisoida? emt
-						jos tietää block dimensiot niin
-						voi hypätä seuraavaan
-						
-						block0		block1		block2
-						x = 0-2		x = 3-5		x = 6-8
-						y = 0-2		y = 0-2		y = 0-2
-						...
-						block6		block7		block8
-						x = 0-2		x = 3-5		x = 6-8
-						y = 6-8		y = 6-8		y = 6-8
-					*/
-					blockx = 4;
-					blocky = 4;
-					int xy = blockx * blocky;
-					gridBlocks = new ArrayList<>( xy );
-					gridBase.setBackground(new Color( 0x990099 ));
-					gridBase.setBorder(new EtchedBorder( EtchedBorder.LOWERED ));
-					gridBase.setLayout(new GridLayout( blockx, blocky, 4, 4 ));
-					JPanel gridBlock;
-					
-					for (int u = 0; u < xy; u++) {
-						gridBlock = new JPanel();
-							gridBlock.setBackground(new Color(0));
-							gridBlock.setBorder(new EtchedBorder( EtchedBorder.RAISED ));
-							gridBlock.setLayout(new GridLayout( blocky, blockx, 0, 0 ));
-							/*
-							for (int i = 0; i < xy; i++) {
-								JButton cellbtn = new JButton( "" + (i+1 + u*xy) );
-									cellbtn.setBackground(new Color( 0xffffff ));
-									cellbtn.setPreferredSize(new Dimension(32, 32));
-								gridBlock.add( cellbtn );
-							}
-							*/
-						gridBase.add( gridBlock );
-					}
-				}
+				//en tiedä miksi sulla oli tää gridBlocks muuttuja täällä kun et tuossa loopissa laittanut
+				//siihen mitään, mutta otin sen kuitenki talteen se on kans tuolla gridbase luokassa
+				/// ////////////////////////////////////////////////////////////
+				gridBase = new GridBase();
+				gridBlocks = gridBase.getGridBlocks();
+
 				frameCont.add( gridBase, BorderLayout.CENTER );
 				
 				////////////////////////////////////////////////////////////////
