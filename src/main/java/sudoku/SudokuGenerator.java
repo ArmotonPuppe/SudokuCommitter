@@ -7,15 +7,16 @@ import java.util.HashSet;
 public class SudokuGenerator {
 	
 	static final int SYMMETRY_NONE = 0;
-	static final int SYMMETRY_HORZ = 1;
-	static final int SYMMETRY_VERT = 2;
-	static final int SYMMETRY_DIAGCW = 3; // NW -> SE
-	static final int SYMMETRY_DIAGCCW = 4; // NE -> SW
+	static final int SYMMETRY_VERT = 1;
+	static final int SYMMETRY_HORZ = 2;
+	static final int SYMMETRY_DIAG1 = 3;
+	static final int SYMMETRY_POINT = 4;
 	
 	private int gridX;
 	private int gridY;
 	private int blockX;
 	private int blockY;
+	private int max;
 	
 	private int seed;
 	private int staticNum; // difficulty essentially, number of ready/clue/given numbers on grid
@@ -44,7 +45,18 @@ public class SudokuGenerator {
 		this.blockX = blockX;
 		this.blockY = blockY;
 		this.seed = seed;
-		this.staticNum = staticNum;
+		
+		max = gridX * gridY;
+		
+		this.staticNum =
+			(staticNum < 0)
+				? 0
+				: (staticNum > max)
+					? max
+					: staticNum
+		;
+		
+		
 		this.symmetry = symmetry;
 		this.gridString = generateGrid();
 		this.staticIndexes = generateStaticIndexes();
@@ -100,17 +112,17 @@ public class SudokuGenerator {
 	private HashSet<Integer> generateStaticIndexes() {
 		HashSet<Integer> idxSet = new HashSet<>(staticNum);
 		switch (symmetry) {
-			case SYMMETRY_DIAGCCW:
-				symmetryFuncBase( idxSet, new SymmetryObjDiagCCW() );
+			case SYMMETRY_POINT:
+				symmetryFuncBase( idxSet, new SymmetryObjPoint() );
 				break;
-			case SYMMETRY_DIAGCW:
-				symmetryFuncBase( idxSet, new SymmetryObjDiagCW() );
-				break;
-			case SYMMETRY_VERT:
-				symmetryFuncBase( idxSet, new SymmetryObjVert() );
+			case SYMMETRY_DIAG1:
+				symmetryFuncBase( idxSet, new SymmetryObjDiag1() );
 				break;
 			case SYMMETRY_HORZ:
 				symmetryFuncBase( idxSet, new SymmetryObjHorz() );
+				break;
+			case SYMMETRY_VERT:
+				symmetryFuncBase( idxSet, new SymmetryObjVert() );
 				break;
 			case SYMMETRY_NONE:
 			default:
@@ -121,21 +133,25 @@ public class SudokuGenerator {
 	}
 	
 	
-	private void symmetryFuncBase( HashSet<Integer> idxSet, SymmetryObj symmetryObj ) {
+	// dumpstere but here for posterity
+	private void symmetryFuncBase0( HashSet<Integer> idxSet, SymmetryObj symmetryObj ) {
 		Random rand = new Random(seed);
 		int r;
 		
 		int idx = 0;
 		int k = 0;
-		int max = gridX*gridY;
+		int reroll = 0;
+		int rerollmax = 100;
 		
 		while (k < staticNum) {
 			r = rand.nextInt(max/2);
 			idx = (idx + max + r) % max;
-			while (idxSet.contains(idx)) {
-				System.out.println( "reroll: " + idx );
+			while (idxSet.contains(idx) && reroll < rerollmax) {
+				System.out.printf( "reroll%d/%d: %d\n", reroll, rerollmax, idx );
 				idx = (idx + max + r) % max;
+				reroll++;
 			}
+			reroll = 0;
 			System.out.printf( "k:%d -> idx:%d\n", k, idx );
 			idxSet.add(idx);
 			k++;
@@ -145,10 +161,59 @@ public class SudokuGenerator {
 			}
 		}
 	}
+	private void symmetryFuncBase( HashSet<Integer> idxSet, SymmetryObj symmetryObj ) {
+		Random rand = new Random(seed);
+		int r;
+		
+		// pull inderxes from an array instead of just rolling them forever potentially
+		
+		// make an array that is in order
+		Integer[] free = new Integer[max];
+		for (int i = 0; i < max; i++) { free[i] = i; }
+		
+		// shuffle array kind of
+		for (int i = max - 1; i >= 0; i--) {
+			r = rand.nextInt(max);
+			if (i != r) {
+				Integer temp = free[i];
+				free[i] = free[r];
+				free[r] = temp;
+			}
+		}
+		
+		int k = 0;
+		int idx = 0;
+		int freeIdx;
+		boolean abort = false;
+		while (k < staticNum) {
+			freeIdx = free[idx++];
+			System.out.println( freeIdx );
+			while (idxSet.contains(freeIdx)) {
+				freeIdx = free[idx++];
+				System.out.println( "reroll: " + freeIdx );
+				if (idx >= max) { abort = true; break; }
+			}
+			if (abort) { break; }
+			idxSet.add(freeIdx);
+			k++;
+			if (symmetryObj != null) {
+				int midx = symmetryObj.symmetryFunc(freeIdx);
+				if (idxSet.add(midx)) { k++; }
+			}
+		}
+	}
 	private interface SymmetryObj {
 		abstract public int symmetryFunc( int idx );
 	}
-	private class SymmetryObjHorz implements SymmetryObj {
+	/*
+		01|23	01|10
+		45|67	45|54
+		89|ab	89|98
+		cd|ef	cd|dc
+		
+		vertical mirror axis, mirrored by X coordinate
+	*/
+	private class SymmetryObjVert implements SymmetryObj {
 		@Override
 		public int symmetryFunc( int idx ) {
 			int x0 = idx % gridX;
@@ -158,7 +223,16 @@ public class SudokuGenerator {
 			return midx;
 		}
 	}
-	private class SymmetryObjVert implements SymmetryObj {
+	/*
+		0123	0123
+		4567	4567
+		----	----
+		89ab	4567
+		cdef	0123
+		
+		horizontal mirror axis, mirrored by Y coordinate
+	*/
+	private class SymmetryObjHorz implements SymmetryObj {
 		@Override
 		public int symmetryFunc( int idx ) {
 			int x = idx % gridX;
@@ -168,7 +242,15 @@ public class SudokuGenerator {
 			return midx;
 		}
 	}
-	private class SymmetryObjDiagCW implements SymmetryObj {
+	/*
+		\123	\123
+		4\67	1\67
+		89\b	26\b
+		cde\	37b\
+		
+		mirrored by diagonal axis from NW -> SE, \
+	*/
+	private class SymmetryObjDiag1 implements SymmetryObj {
 		@Override
 		public int symmetryFunc( int idx ) {
 			int x0 = idx % gridX;
@@ -179,7 +261,15 @@ public class SudokuGenerator {
 			return midx;
 		}
 	}
-	private class SymmetryObjDiagCCW implements SymmetryObj {
+	/**
+		-->3	0123
+		4567	4567
+		89ab	7654
+		c<--	3210
+		
+		mirorred by index, point symmetry
+	**/
+	private class SymmetryObjPoint implements SymmetryObj {
 		@Override
 		public int symmetryFunc( int idx ) {
 			return gridX*gridY - 1 - idx;
@@ -195,7 +285,6 @@ public class SudokuGenerator {
 	public int[][] toArray( String input ) {
 		int[][] array = new int[gridY][gridX];
 		
-		int max = gridX*gridY;
 		int x, y;
 		for (int i = 0; i < max; i++) {
 			char c = (char) (input.charAt(i) - '0');
@@ -205,6 +294,46 @@ public class SudokuGenerator {
 		}
 		
 		return array;
+	}
+	public String arrayToString( int[][] array ) {
+		StringBuilder sb = new StringBuilder();
+		
+		for (int y = 0; y < gridY; y++) {
+			for (int x = 0; x < gridX; x++) {
+				sb.append( array[y][x] );
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	
+	public void reverseGrid() {
+		gridString = new StringBuilder(gridString).reverse().toString();
+		puzzleString = new StringBuilder(puzzleString).reverse().toString();
+	}
+	
+	
+	public int[][] flipArray( int[][] array, boolean horz, boolean vert ) {
+		int[][] out = new int[gridY][gridX];
+		
+		int xf, yf;
+		for (int y = 0; y < gridY; y++) {
+			for (int x = 0; x < gridX; x++) {
+				xf = (horz) ? gridX-1 - x : x;
+				yf = (vert) ? gridY-1 - y : y;
+				out[y][x] = array[yf][xf];
+			}
+		}
+		
+		return out;
+	}
+	
+	
+	public String flipGridString( String inp, boolean horz, boolean vert ) {
+		int[][] grid = toArray(inp);
+		grid = flipArray( grid, horz, vert );
+		return arrayToString(grid);
 	}
 	
 	
@@ -260,8 +389,13 @@ public class SudokuGenerator {
 	
 	
 	public static void main(String[] args) {
+		
 		SudokuGenerator perse = new SudokuGenerator(
-			9,9,3,3, 1, 25, SYMMETRY_DIAGCCW
+			9,9,
+			3,3,
+			1,
+			25,
+			SYMMETRY_NONE
 		);
 		System.out.println( perse.printGrid(true) );
 		System.out.println( perse.printGrid(false) );
