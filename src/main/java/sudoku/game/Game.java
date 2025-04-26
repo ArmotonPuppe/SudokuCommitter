@@ -14,8 +14,8 @@ public class Game {
     private Instant endTime;
 
     public Game() {
-        Settings settings = new Settings();
-        path = Paths.get("config/setting.properties");
+        settings = new Settings();
+        path = Paths.get("config/settings.properties");
     }
 
     public Game(Settings settings, Path path) {
@@ -65,4 +65,7 @@ public class Game {
         return puzzle;
     }
 
+    public Path getPath() {
+        return path;
+    }
 }

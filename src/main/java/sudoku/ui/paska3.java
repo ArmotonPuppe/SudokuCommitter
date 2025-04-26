@@ -4,8 +4,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import sudoku.ui.menu.*;
+import sudoku.game.Game;
 
 public class paska3 {
 	
@@ -32,6 +34,7 @@ public class paska3 {
 	static boolean showToolBar = true;
 	static boolean showPalette = true;
 	static boolean showStats = true;
+    static Game game = new Game();
 	
 	////////////////////////////////////////////////////////////////
 	//	toolbar buttons?
@@ -134,6 +137,7 @@ public class paska3 {
 	////////////////////////////////////////////////////////////////
 	
 	public static void main(String[] args) {
+
 		Runnable ass = new Runnable() {
 			@Override
 			public void run() {
@@ -152,7 +156,7 @@ public class paska3 {
 				////////////////////////////////////////////////////////////////
 
 				menuBar = new JMenuBar();
-					menuBar.add( new MenuGame() );
+					menuBar.add( new MenuGame(frame) );
 					menuBar.add( new MenuView() );
 					menuBar.add( new MenuHelp() );
 				frame.setJMenuBar( menuBar );
@@ -237,7 +241,7 @@ public class paska3 {
 				//en tiedä miksi sulla oli tää gridBlocks muuttuja täällä kun et tuossa loopissa laittanut
 				//siihen mitään, mutta otin sen kuitenki talteen se on kans tuolla gridbase luokassa
 				/// ////////////////////////////////////////////////////////////
-				gridBase = new GridBase();
+				gridBase = new GridBase(game.getPuzzle().getGrid());
 				gridBlocks = gridBase.getGridBlocks();
 
 				frameCont.add( gridBase, BorderLayout.CENTER );

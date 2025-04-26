@@ -1,5 +1,6 @@
 package sudoku.ui;
 
+import sudoku.board.Grid;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
@@ -12,8 +13,9 @@ public class GridBase extends JPanel {
     private int blockx = 3;
     private int blocky = 3;
     private int size = 9;
-    public GridBase() {
+    public GridBase(Grid grid) {
         super();
+
         setBackground(new Color( 0x990099 ));
         setBorder(new EtchedBorder( EtchedBorder.LOWERED ));
         setLayout(new GridLayout( blockx, blocky, 4, 4 ));
