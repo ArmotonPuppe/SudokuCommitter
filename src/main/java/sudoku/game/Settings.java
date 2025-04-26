@@ -12,6 +12,10 @@ public class Settings {
     private Difficulty difficulty;
     private int gridSize;
 
+    public Settings(){
+        
+    }
+
     public void load(Path path) throws IOException {
         Properties props = new Properties();
         try (InputStream in = Files.newInputStream(path)) {
