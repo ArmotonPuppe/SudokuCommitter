@@ -7,7 +7,11 @@ public class PuzzleFactory {
         String path = "/" + difficulty.getLabel() + ".csv";
         Puzzle puzzle = null;
         InputStream is = getClass().getResourceAsStream(path);
+
         if(is == null){
+            ClassLoader cl = getClass().getClassLoader();
+            System.out.println("Classloader: " + cl);
+            System.out.println("Classloader root resource: " + cl.getResource(""));
             throw new FileNotFoundException("Could not find Puzzle at " + path);
         }
         try(BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
@@ -20,8 +24,10 @@ public class PuzzleFactory {
             if(!validatePuzzle(givens, solution)) {
                 throw new IllegalStateException("Solution doesn't match the puzzle in file at: " + parts[0]);
             }else{
+                System.out.println(System.getProperty("java.class.path"));
                 puzzle = new Puzzle(id, size, difficulty, solution, givens);
             }
+
         }catch(IOException e){
             e.printStackTrace();
         }
