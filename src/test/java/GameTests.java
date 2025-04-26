@@ -29,5 +29,7 @@ public class GameTests {
         assertEquals(9, settings.getGridSize());
         assertNotNull(game.getSettings());
         game.start();
+        assertEquals(settings.getDifficulty(), game.getSettings().getDifficulty());
+        assertEquals(settings.getGridSize(), game.getSettings().getGridSize());
     }
 }
