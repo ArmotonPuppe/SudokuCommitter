@@ -34,7 +34,7 @@ public class paska3 {
 	static boolean showToolBar = true;
 	static boolean showPalette = true;
 	static boolean showStats = true;
-    static Game game = new Game();
+    static Game game;
 	
 	////////////////////////////////////////////////////////////////
 	//	toolbar buttons?
@@ -141,7 +141,12 @@ public class paska3 {
 		Runnable ass = new Runnable() {
 			@Override
 			public void run() {
-				
+				game = new Game();
+				try{
+					game.start();
+				}catch( Exception e ){
+					System.out.println("lol");
+				}
 				////////////////////////////////////////////////////////////////
 				//	frame
 				////////////////////////////////////////////////////////////////
@@ -241,7 +246,7 @@ public class paska3 {
 				//en tiedä miksi sulla oli tää gridBlocks muuttuja täällä kun et tuossa loopissa laittanut
 				//siihen mitään, mutta otin sen kuitenki talteen se on kans tuolla gridbase luokassa
 				/// ////////////////////////////////////////////////////////////
-				gridBase = new GridBase(game.getPuzzle().getGrid());
+				gridBase = new GridBase(game.getPuzzle().getGivens());
 				gridBlocks = gridBase.getGridBlocks();
 
 				frameCont.add( gridBase, BorderLayout.CENTER );
